@@ -92,6 +92,8 @@ declare namespace Electron {
       channel: "set-clipboard-data",
       listener: (event: IpcMainInvokeEvent, data: WebApi.SetClipboardData) => void,
     ): this;
+    on(channel: "set-use-zenity", listener: (event: IpcMainInvokeEvent, value: boolean) => void): this;
+    on(channel: "set-settings", listener: (event: IpcMainInvokeEvent, settings: SettingsInterface) => void): this;
 
     handle(
       channel: "writeNewExtensionToDisk",
@@ -122,6 +124,12 @@ declare namespace Electron {
       listener: (event: IpcMainInvokeEvent, data: WebApi.WriteFiles) => Promise<void> | void,
     ): void;
     handle(channel: "get-fonts", listener: (event: IpcMainInvokeEvent) => Promise<void> | FontsMap): void;
+    handle(
+      channel: "get-font-file",
+      listener: (event: IpcMainInvokeEvent, data: WebApi.GetFontFile) => Promise<void> | Buffer,
+    ): void;
+    handle(channel: "add-font-directories", listener: (event: IpcMainInvokeEvent) => Promise<string[] | null>): void;
+    handle(channel: "select-export-directory", listener: (event: IpcMainInvokeEvent) => Promise<string | null>): void;
   }
 
   interface IpcRenderer extends NodeJS.EventEmitter {
@@ -179,6 +187,8 @@ declare namespace Electron {
     send(channel: "saveCreatorTheme", theme: Themes.Theme): this;
     send(channel: "sync-themes"): this;
     send(channel: "set-clipboard-data", data: WebApi.SetClipboardData): this;
+    send(channel: "set-use-zenity", value: boolean): this;
+    send(channel: "set-settings", settings: SettingsInterface): this;
 
     invoke(channel: "writeNewExtensionToDisk", data: WebApi.WriteNewExtensionToDiskArgs): Promise<number>;
     invoke(channel: "getAllLocalFileExtensionIds"): Promise<number[]>;
@@ -191,6 +201,9 @@ declare namespace Electron {
     invoke(channel: "isDevToolsOpened"): Promise<boolean>;
     invoke(channel: "writeFiles", data: WebApi.WriteFiles): Promise<void>;
     invoke(channel: "get-fonts"): Promise<FontsMap>;
+    invoke(channel: "get-font-file", data: WebApi.GetFontFile): Promise<Buffer>;
+    invoke(channel: "add-font-directories"): Promise<string[] | null>;
+    invoke(channel: "select-export-directory"): Promise<string | null>;
   }
 
   interface WebContents extends NodeJS.EventEmitter {
